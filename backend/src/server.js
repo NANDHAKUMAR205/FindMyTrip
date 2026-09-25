@@ -11,7 +11,17 @@ const errors = require('./middleware/errors');
 
 const app = express();
 
-app.use(cors({ origin: clientUrl }));
+const allowedOrigins = clientUrl.split(',').map((origin) => origin.trim()).filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`CORS origin not allowed: ${origin}`));
+  },
+}));
 app.use(express.json({ limit: '1mb' }));
 
 app.get('/api/health', (req, res) => res.json({ success: true, service: 'FindMyTrip API' }));

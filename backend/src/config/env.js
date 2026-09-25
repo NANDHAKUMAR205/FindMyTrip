@@ -6,5 +6,5 @@ module.exports = {
   mongoUri: process.env.MONGODB_URI,
   jwtSecret: process.env.JWT_SECRET,
   liteApiKey: process.env.LITEAPI_API_KEY || process.env.LITEAPI_KEY,
-  clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
+  clientUrl: process.env.CLIENT_URL || 'https://frontend-teal-theta-56.vercel.app',
 };
