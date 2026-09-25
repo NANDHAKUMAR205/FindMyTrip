@@ -1,0 +1,6 @@
+const Trip = require('../models/Trip');
+const toTrip = (body, userId) => ({ ...body, userId, departureDate: body.departureDate, returnDate: body.returnDate, selectedFlight: body.flight, selectedHotel: body.hotel, estimatedFoodCost: body.estimatedFoodCost, estimatedLocalTransportCost: body.estimatedLocalTransportCost, estimatedActivitiesCost: body.estimatedActivitiesCost, totalTripCost: body.totalTripCost, costPerPerson: body.costPerPerson });
+exports.create = async (req, res, next) => { try { const trip = await Trip.create(toTrip(req.body, req.user._id)); res.status(201).json({ success: true, trip }); } catch (e) { next(e); } };
+exports.list = async (req, res, next) => { try { res.json({ success: true, trips: await Trip.find({ userId: req.user._id }).sort({ createdAt: -1 }) }); } catch (e) { next(e); } };
+exports.get = async (req, res, next) => { try { const trip = await Trip.findOne({ _id: req.params.id, userId: req.user._id }); if (!trip) return res.status(404).json({ success: false, error: 'Trip not found' }); res.json({ success: true, trip }); } catch (e) { next(e); } };
+exports.itinerary = async (req, res, next) => { try { const trip = await Trip.findOneAndUpdate({ _id: req.params.id, userId: req.user._id }, { itinerary: req.body }, { new: true }); res.json({ success: true, trip }); } catch (e) { next(e); } };

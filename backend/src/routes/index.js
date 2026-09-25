@@ -1,0 +1,15 @@
+const router = require('express').Router();
+const auth = require('../middleware/auth');
+const authController = require('../controllers/authController');
+const searchController = require('../controllers/searchController');
+const tripController = require('../controllers/tripController');
+router.post('/auth/register', authController.register);
+router.post('/auth/login', authController.login);
+router.get('/auth/me', auth, authController.me);
+router.put('/users/preferences', auth, authController.preferences);
+router.post('/search', auth, searchController.search);
+router.get('/trips', auth, tripController.list);
+router.post('/trips', auth, tripController.create);
+router.get('/trips/:id', auth, tripController.get);
+router.put('/trips/:id/itinerary', auth, tripController.itinerary);
+module.exports = router;
