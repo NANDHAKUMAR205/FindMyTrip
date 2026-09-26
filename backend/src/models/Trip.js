@@ -10,7 +10,7 @@ module.exports = mongoose.model('Trip', new mongoose.Schema({
   selectedHotel: { type: mongoose.Schema.Types.Mixed, default: null },
   estimatedFoodCost: Number, estimatedLocalTransportCost: Number, estimatedActivitiesCost: Number,
   mandatoryCosts: { type: Number, default: 0 },
-  totalTripCost: Number, costPerPerson: Number,
+  totalTripCost: Number, costPerPerson: Number, costPerDay: Number,
   costBreakdown: { type: mongoose.Schema.Types.Mixed, default: {} },
   confidence: String, sources: { type: [String], default: [] },
   itinerary: { type: mongoose.Schema.Types.Mixed, default: {} },

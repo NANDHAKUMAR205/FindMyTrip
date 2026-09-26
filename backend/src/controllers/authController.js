@@ -17,4 +17,13 @@ exports.login = async (req, res, next) => { try {
   res.json({ success: true, user: publicUser(user), token: jwt.sign({ userId: user._id }, jwtSecret, { expiresIn: '7d' }) });
 } catch (e) { next(e); } };
 exports.me = async (req, res) => res.json({ success: true, user: publicUser(req.user) });
-exports.preferences = async (req, res, next) => { try { req.user.preferences = { ...req.user.preferences.toObject(), ...req.body }; await req.user.save(); res.json({ success: true, user: publicUser(req.user) }); } catch (e) { next(e); } };
+exports.preferences = async (req, res, next) => { try {
+  const allowed = ['currency', 'travelStyle', 'preferredCabin', 'interests'];
+  const changes = Object.fromEntries(allowed.filter((key) => Object.hasOwn(req.body || {}, key)).map((key) => [key, req.body[key]]));
+  if (changes.currency && !['USD', 'EUR', 'GBP', 'INR'].includes(changes.currency)) return res.status(400).json({ success: false, error: 'Unsupported currency.' });
+  if (changes.travelStyle && !['balanced', 'budget', 'comfort'].includes(changes.travelStyle)) return res.status(400).json({ success: false, error: 'Unsupported travel style.' });
+  if (changes.interests && (!Array.isArray(changes.interests) || changes.interests.some((item) => typeof item !== 'string'))) return res.status(400).json({ success: false, error: 'Interests must be a list of text values.' });
+  req.user.preferences = { ...req.user.preferences.toObject(), ...changes };
+  await req.user.save();
+  res.json({ success: true, user: publicUser(req.user) });
+} catch (e) { next(e); } };
